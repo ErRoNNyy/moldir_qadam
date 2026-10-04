@@ -1,0 +1,995 @@
+HEALTHY FOOD PLANNER APP — PRODUCT IDEA & WORKFLOW
+=====================================================
+
+1. PRODUCT OVERVIEW
+-------------------
+
+The app is a cross-platform mobile + desktop/web application for people who
+follow a healthy lifestyle and want an easier way to discover, organize,
+cook, plan, and track high-protein / lower-calorie meals.
+
+The main problem:
+
+People discover recipes on YouTube, but when they actually want to cook them,
+they have to:
+- find the video again;
+- search through the video;
+- pause and rewind;
+- write down ingredients;
+- understand quantities;
+- estimate calories and macros;
+- remember what they planned to eat;
+- manually create shopping lists;
+- remember what they actually ate.
+
+The app should turn this into one continuous workflow:
+
+YouTube → paste link → AI structures recipe → save → put on calendar
+→ generate shopping list → cook → mark as eaten → track history
+
+The key product idea is NOT simply "AI recipe extraction".
+
+The stronger product is:
+
+A PERSONAL FOOD PLANNER + RECIPE DATABASE + NUTRITION TRACKER +
+CALENDAR + SHOPPING LIST.
+
+The AI is the entry point that makes the workflow easy.
+
+
+2. MAIN APP SECTIONS
+--------------------
+
+The primary navigation should have four main sections:
+
+1. VIDEO
+2. CALENDAR
+3. SHOPPING
+4. YOU / PROFILE
+
+Recommended interpretation of each section:
+
+VIDEO
+------
+The input and recipe-import section.
+
+Purpose:
+- Paste a YouTube video link.
+- Analyze the video.
+- Extract the recipe.
+- Show structured ingredients.
+- Show cooking instructions.
+- Estimate nutrition.
+- Allow the user to edit the result.
+- Save the recipe.
+
+CALENDAR
+--------
+The planning section.
+
+Purpose:
+- Plan meals for specific days.
+- Assign meals to breakfast/lunch/dinner or other meal types.
+- View daily and weekly plans.
+- See calories and macros for planned meals.
+- Mark planned meals as eaten.
+- Move or reschedule meals.
+
+SHOPPING
+--------
+The execution section.
+
+Purpose:
+- Automatically generate a shopping list from planned meals.
+- Combine repeated ingredients across recipes.
+- Group ingredients into logical categories.
+- Let users check ingredients off while shopping.
+- Allow manual additions/removals.
+
+YOU / PROFILE
+-------------
+The personal history and statistics section.
+
+Purpose:
+- Track what the user actually ate.
+- View nutrition history.
+- View recent meals.
+- See favorite/most-cooked recipes.
+- See statistics and trends.
+- Reuse meals from previous days/weeks.
+
+
+3. CORE PRODUCT LOOP
+--------------------
+
+The main loop of the application is:
+
+1. User finds a recipe on YouTube.
+2. User opens the app.
+3. User pastes the YouTube link.
+4. Backend obtains available video information/transcript and/or other
+   accessible content.
+5. AI analyzes the content.
+6. AI converts the recipe into structured data.
+7. The app displays:
+   - recipe title;
+   - ingredients;
+   - quantities;
+   - servings;
+   - preparation/cooking steps;
+   - estimated calories;
+   - protein;
+   - carbohydrates;
+   - fat.
+8. User reviews and edits the extracted information.
+9. User saves the recipe.
+10. User adds the recipe to a calendar date.
+11. The calendar becomes the user's weekly meal plan.
+12. The app generates a shopping list from planned meals.
+13. User shops using the list.
+14. User cooks the planned meal.
+15. User marks the meal as "Eaten".
+16. The meal is added to food history.
+17. Nutrition totals are updated.
+18. The user can later look at previous meals and reuse them.
+
+
+4. MAIN DIFFERENTIATOR
+----------------------
+
+The product should avoid becoming "just another AI recipe generator".
+
+The real value is the connection between:
+
+RECIPE
+  ↓
+NUTRITION
+  ↓
+CALENDAR
+  ↓
+SHOPPING
+  ↓
+COOKING
+  ↓
+FOOD HISTORY
+  ↓
+REUSE
+
+The product should help the user build a persistent personal food system.
+
+A user should eventually be able to answer questions such as:
+
+- What did I eat last Monday?
+- What meals do I cook most often?
+- Which of my saved meals has the most protein?
+- What meals are planned for this week?
+- What groceries do I need this week?
+- How many calories/protein did I consume this week?
+- Which recipes should I reuse?
+
+
+5. VIDEO / RECIPE IMPORT WORKFLOW
+---------------------------------
+
+USER INPUT
+----------
+
+Example:
+
+https://youtube.com/watch?v=example
+
+PROCESS
+-------
+
+YouTube URL
+   ↓
+Video/transcript/content retrieval
+   ↓
+AI analysis
+   ↓
+Recipe extraction
+   ↓
+Ingredient normalization
+   ↓
+Nutrition calculation
+   ↓
+Structured recipe
+   ↓
+User review/edit
+   ↓
+Save recipe
+
+The structured recipe should contain at minimum:
+
+Recipe:
+- title
+- source URL
+- source platform
+- description (optional)
+- servings
+
+Ingredients:
+- ingredient name
+- quantity
+- unit
+- optional preparation note
+
+Steps:
+- ordered cooking instructions
+
+Nutrition:
+- calories
+- protein
+- carbohydrates
+- fat
+
+Optional future fields:
+- fiber
+- sugar
+- sodium
+- cooking time
+- preparation time
+- total time
+- difficulty
+- tags
+- cuisine
+- dietary labels
+
+
+6. IMPORTANT AI / NUTRITION RULE
+--------------------------------
+
+Nutrition should NOT rely entirely on the LLM guessing calories.
+
+The preferred pipeline is:
+
+Video / transcript
+   ↓
+LLM extracts ingredients + quantities
+   ↓
+Normalize ingredients
+   ↓
+Match ingredients to a nutrition database
+   ↓
+Calculate calories/macros from ingredient quantities
+   ↓
+Aggregate totals
+   ↓
+Display estimated nutrition
+   ↓
+Allow user editing
+
+Reason:
+
+A video can say:
+- "add some olive oil"
+- "take some chicken"
+- "a little cheese"
+- "one handful of nuts"
+
+These quantities are ambiguous.
+
+Therefore the application should show nutrition as ESTIMATED and let users
+correct ingredient quantities.
+
+The user should be able to edit:
+- quantity;
+- unit;
+- serving size;
+- ingredient;
+- nutrition values where necessary.
+
+
+7. CALENDAR WORKFLOW
+--------------------
+
+Calendar should be one of the central parts of the product.
+
+Example:
+
+MONDAY
+-------
+Lunch
+Chicken Pasta
+620 kcal
+52g protein
+
+Dinner
+Chicken Caesar Salad
+450 kcal
+38g protein
+
+TUESDAY
+--------
+Lunch
+Beef Rice Bowl
+...
+
+WEDNESDAY
+----------
+...
+
+The user should be able to:
+- add a recipe to a date;
+- select meal type;
+- move meals;
+- duplicate meals;
+- remove meals;
+- mark meals as eaten;
+- view nutrition totals.
+
+The calendar should support both:
+- daily view;
+- weekly view.
+
+The top of the weekly calendar can display a summary such as:
+
+Weekly planned calories
+Weekly planned protein
+Meals planned
+Meals eaten
+
+
+8. DAILY NUTRITION DASHBOARD
+----------------------------
+
+The app should calculate nutrition totals for the user's meals.
+
+Example:
+
+TODAY
+
+Calories: 1,920 kcal
+Protein: 148g
+Carbs: 210g
+Fat: 57g
+
+The user should be able to see:
+- planned nutrition;
+- consumed nutrition;
+- remaining nutrition (optional future feature).
+
+Important:
+Do not make the product overly complicated around nutrition during MVP.
+
+
+9. SHOPPING LIST WORKFLOW
+--------------------------
+
+The shopping list is a natural consequence of the calendar.
+
+Example planned meals:
+
+Monday:
+- Chicken Pasta
+- Chicken Salad
+
+Tuesday:
+- Beef Rice Bowl
+
+Wednesday:
+- Chicken Wrap
+
+The app combines the required ingredients:
+
+SHOPPING LIST
+-------------
+
+MEAT
+- Chicken — 700g
+- Beef — 300g
+
+CARBS
+- Pasta — 250g
+- Rice — 200g
+- Tortillas — 4
+
+VEGETABLES
+- Tomatoes — 4
+- Lettuce — 1
+- Onion — 2
+
+The system should combine repeated ingredients.
+
+For example:
+
+Chicken Pasta needs 300g chicken.
+Chicken Salad needs 200g chicken.
+Chicken Wrap needs 200g chicken.
+
+Shopping list:
+Chicken — 700g
+
+The shopping list should allow:
+- checking items off;
+- adding items manually;
+- deleting items;
+- changing quantity;
+- grouping by category.
+
+
+10. FOOD HISTORY
+----------------
+
+Food history is one of the most important long-term retention features.
+
+A user should be able to open their personal history and see:
+
+August 18
+- Chicken Pasta
+- Beef Steak
+
+August 17
+- Chicken Rice
+- Greek Yogurt Bowl
+
+August 16
+- Chicken Wrap
+- Beef Rice Bowl
+
+The user should be able to reuse previous meals easily.
+
+Example:
+
+"What did I eat last Monday?"
+
+The app immediately shows the meals.
+
+Example:
+
+"Show my most-cooked meals."
+
+Possible result:
+1. Chicken Pasta — 8 times
+2. Chicken Rice — 6 times
+3. Beef Steak — 5 times
+
+
+11. PROFILE / "YOU" PAGE
+-----------------------
+
+Instead of making Profile only a settings page, it should work as the user's
+personal food dashboard.
+
+Possible sections:
+
+TODAY
+- Calories consumed
+- Protein consumed
+- Carbs consumed
+- Fat consumed
+
+RECENT MEALS
+- Recently eaten meals
+
+STATISTICS
+- Average calories/day
+- Average protein/day
+- Number of meals eaten
+- Most cooked recipe
+- Favorite recipes
+
+HISTORY
+- Previous days/weeks
+
+SAVED RECIPES
+- Personal recipe database
+
+Settings can still be placed at the bottom or in a separate settings screen.
+
+
+12. DATA MODEL
+--------------
+
+Important distinction:
+
+RECIPE ≠ PLANNED MEAL ≠ CONSUMED MEAL
+
+Example:
+
+Recipe:
+Chicken Pasta
+
+Planned:
+Monday lunch
+
+Consumed:
+No
+
+The user may plan a meal but not actually eat it.
+
+Recommended main entities:
+
+users
+recipes
+recipe_ingredients
+recipe_steps
+nutrition
+meal_plans
+meal_plan_items
+food_logs
+shopping_lists
+shopping_list_items
+
+Possible relationships:
+
+users
+  ↓
+recipes
+
+recipes
+  ↓
+recipe_ingredients
+recipe_steps
+nutrition
+
+recipes
+  ↓
+meal_plan_items
+  ↓
+meal_plans
+
+meal_plan_items
+  ↓
+food_logs
+
+meal_plans
+  ↓
+shopping_lists
+  ↓
+shopping_list_items
+
+
+13. SUGGESTED DATABASE RESPONSIBILITIES
+---------------------------------------
+
+USERS
+-----
+User/account information.
+
+RECIPES
+-------
+- id
+- user_id
+- title
+- source_url
+- source_platform
+- servings
+- cooking_time
+- preparation_time
+- created_at
+
+RECIPE_INGREDIENTS
+------------------
+- id
+- recipe_id
+- name
+- quantity
+- unit
+- notes
+
+RECIPE_STEPS
+------------
+- id
+- recipe_id
+- step_number
+- instruction
+
+NUTRITION
+---------
+- id
+- recipe_id
+- calories
+- protein
+- carbohydrates
+- fat
+- optional additional nutrients
+
+MEAL_PLANS
+----------
+Represents a user's planned calendar period or day.
+
+MEAL_PLAN_ITEMS
+---------------
+- id
+- meal_plan_id
+- recipe_id
+- date
+- meal_type
+- servings
+- status
+
+Possible status values:
+- planned
+- eaten
+- skipped
+
+FOOD_LOGS
+---------
+Represents actual consumed meals.
+
+SHOPPING_LISTS
+--------------
+- id
+- user_id
+- date/range
+- status
+
+SHOPPING_LIST_ITEMS
+-------------------
+- id
+- shopping_list_id
+- ingredient
+- quantity
+- unit
+- category
+- checked
+
+
+14. MVP
+-------
+
+The first version should stay focused.
+
+MVP FEATURES:
+
+1. Authentication
+2. Paste YouTube link
+3. AI recipe extraction
+4. Structured ingredient list
+5. Cooking steps
+6. Estimated calories/macros
+7. Edit extracted recipe
+8. Save recipe
+9. Calendar
+10. Add recipe to date
+11. Mark meal as eaten
+12. Food history
+13. Automatic shopping list
+14. Basic profile/statistics
+
+MVP WORKFLOW:
+
+YouTube
+→ Paste link
+→ AI
+→ Recipe
+→ Review
+→ Save
+→ Calendar
+→ Shopping list
+→ Cook
+→ Mark eaten
+→ History
+
+
+15. THINGS NOT TO BUILD IN MVP
+------------------------------
+
+Avoid scope creep.
+
+Do NOT start with:
+- social network;
+- comments;
+- followers;
+- recipe marketplace;
+- workout tracking;
+- AI personal trainer;
+- restaurant integrations;
+- wearable integrations;
+- grocery delivery;
+- large public recipe database;
+- dozens of diet modes;
+- complicated recommendation systems.
+
+First prove the core loop.
+
+
+16. FUTURE VERSION / V2
+-----------------------
+
+Once the MVP works well, add:
+
+PERSONALIZED WEEKLY PLANNING
+----------------------------
+
+User enters a target such as:
+- approximately 2,000 calories/day;
+- high protein;
+- specific number of meals/day.
+
+The system creates a weekly plan using the user's OWN saved recipes.
+
+Example:
+
+Monday
+Chicken Pasta
+
+Tuesday
+Beef Rice Bowl
+
+Wednesday
+Chicken Wrap
+
+This is more valuable than generic AI meal planning because the system knows
+the recipes the user already likes.
+
+OTHER V2 FEATURES
+-----------------
+- pantry;
+- recipes based on ingredients currently available;
+- ingredient replacement;
+- meal replacement;
+- improved statistics;
+- search/filter saved recipes;
+- favorite recipes;
+- recipe tags;
+- better weekly nutrition insights.
+
+
+17. FUTURE VERSION / V3
+-----------------------
+
+Potential advanced features:
+
+PANTRY
+------
+"I have chicken, rice, eggs and tomatoes."
+
+App:
+"Here are recipes you can make."
+
+SMART REPLACEMENT
+-----------------
+"I don't want chicken today."
+
+App replaces a chicken meal with a similar saved meal.
+
+HISTORY INTELLIGENCE
+--------------------
+"Show me meals I haven't eaten for two weeks."
+
+RECIPE RECOMMENDATIONS
+----------------------
+Recommend meals based on:
+- previous meals;
+- protein;
+- calories;
+- frequency;
+- preferences.
+
+The long-term idea is to make the application learn the user's personal food
+habits.
+
+
+18. TECH STACK
+--------------
+
+DESKTOP / WEB
+-------------
+Next.js
+Supabase
+
+MOBILE
+------
+React Native
+Supabase
+
+BACKEND / SHARED SERVICES
+-------------------------
+Supabase can be shared between web and mobile for:
+- authentication;
+- PostgreSQL database;
+- storage;
+- realtime features where needed.
+
+Potential AI / processing layer:
+- separate backend service or server-side processing;
+- video/transcript processing;
+- LLM-based recipe extraction;
+- nutrition database integration.
+
+
+19. HIGH-LEVEL ARCHITECTURE
+---------------------------
+
+                 ┌─────────────────────┐
+                 │       SUPABASE      │
+                 │                     │
+                 │ Auth                │
+                 │ PostgreSQL          │
+                 │ Storage             │
+                 │ Realtime            │
+                 └──────────┬──────────┘
+                            │
+                 ┌──────────┴──────────┐
+                 │                     │
+           ┌─────▼─────┐        ┌──────▼─────┐
+           │  Next.js  │        │ React      │
+           │    Web    │        │   Native   │
+           └───────────┘        └────────────┘
+
+AI RECIPE PROCESSING:
+
+YouTube URL
+   ↓
+Video/transcript retrieval
+   ↓
+LLM
+   ↓
+Structured recipe JSON
+   ↓
+Ingredient normalization
+   ↓
+Nutrition database
+   ↓
+Calculated nutrition
+   ↓
+Supabase
+   ↓
+Web + Mobile
+
+
+20. PRODUCT PHILOSOPHY
+----------------------
+
+The app should optimize for LOW FRICTION.
+
+Users should not have to manually enter everything.
+
+Bad workflow:
+
+Search food
+→ select ingredient
+→ enter amount
+→ enter calories
+→ enter protein
+→ confirm
+→ repeat
+
+Better workflow:
+
+Paste recipe
+→ AI creates everything
+→ user quickly checks it
+→ add to calendar
+→ cook
+→ one tap "Eaten"
+
+The goal is:
+
+ONE-TAP / LOW-EFFORT TRACKING.
+
+
+21. KEY PRODUCT RISK
+--------------------
+
+The biggest product risk is not technically extracting recipes.
+
+It is user retention.
+
+Many people say:
+"I want to track my food."
+
+Then stop doing it after a few days because tracking becomes annoying.
+
+Therefore:
+- importing recipes must be fast;
+- adding meals to the calendar must be easy;
+- marking meals as eaten must be one action;
+- shopping lists must be automatic;
+- historical meals must be easy to reuse.
+
+The application should reduce work rather than create another tracking chore.
+
+
+22. KEY TECHNICAL RISK
+----------------------
+
+AI extraction from videos can be inaccurate.
+
+Potential problems:
+- ingredients only visible on screen;
+- incomplete transcripts;
+- vague quantities;
+- missing measurements;
+- spoken instructions that differ from visible ingredients;
+- ambiguous serving sizes;
+- oil/sauce amounts not specified.
+
+Solution:
+- present extracted data as editable;
+- use AI for extraction, not as the only nutrition source;
+- use a nutrition database for calculated values;
+- clearly label values as estimates when appropriate.
+
+
+23. PRODUCT POSITIONING
+-----------------------
+
+Avoid positioning:
+
+"AI recipe generator"
+
+Because that is only one feature.
+
+Better positioning:
+
+"Your personal food planner."
+
+or:
+
+"Turn recipes you love into your weekly meal plan."
+
+The value proposition is:
+
+Find a recipe anywhere.
+Import it.
+Understand it.
+Plan it.
+Shop for it.
+Cook it.
+Track it.
+Reuse it.
+
+
+24. FINAL CORE CONCEPT
+----------------------
+
+The product is a personal healthy-food operating system built around recipes
+the user already discovers online.
+
+Four main areas:
+
+VIDEO
+→ Import recipes from videos
+
+CALENDAR
+→ Plan when to eat them
+
+SHOPPING
+→ Buy everything required
+
+YOU
+→ Track what you actually ate and learn from your history
+
+
+The complete core loop:
+
+YouTube
+→ Paste link
+→ AI structures recipe
+→ Review/edit
+→ Save
+→ Add to calendar
+→ Generate shopping list
+→ Buy ingredients
+→ Cook
+→ Mark as eaten
+→ Nutrition tracked
+→ History saved
+→ Reuse the meal later
+
+
+25. MAIN SUCCESS METRICS
+------------------------
+
+Useful MVP metrics to track:
+
+- Number of recipes imported
+- Percentage of imported recipes successfully saved
+- Number of meals added to calendar
+- Number of meals marked as eaten
+- Weekly active users
+- Recipes reused
+- Shopping lists generated
+- Shopping list completion
+- 7-day and 30-day retention
+
+The strongest retention signal may be:
+
+How often users return to their saved recipes, calendar, and food history.
+
+=====================================================
+END OF PRODUCT SPECIFICATION
+=====================================================
