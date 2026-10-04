@@ -1,4 +1,5 @@
 import type { MealStatus } from "@/lib/types";
+import Image from "next/image";
 
 export function Thumb({
   emoji,
@@ -58,19 +59,15 @@ export function StatusBadge({ status }: { status: MealStatus }) {
 export function Logo() {
   return (
     <div className="flex items-center gap-2.5">
-      <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-brand-dark text-white shadow-sm">
-        <svg viewBox="0 0 24 24" width={18} height={18} aria-hidden>
-          <path
-            d="M12 3c3 2.5 5 5.2 5 8.6a5 5 0 0 1-10 0C7 8.2 9 5.5 12 3z"
-            fill="#eaf5ec"
-          />
-          <path
-            d="M12 8.5c1.4 1.2 2.3 2.4 2.3 3.9a2.3 2.3 0 0 1-4.6 0c0-1.5.9-2.7 2.3-3.9z"
-            fill="#1f7a4d"
-          />
-        </svg>
-      </div>
-      <span className="text-[17px] font-bold tracking-tight text-ink">Nouri</span>
+      <Image
+        src="/design/logo/logo.png"
+        alt=""
+        width={8}
+        height={8}
+        aria-hidden="true"
+        className="h-9 w-9 shrink-0 object-contain"
+      />
+      <span className="text-[17px] font-bold tracking-tight text-ink">MQM</span>
     </div>
   );
 }

@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nouri — Your personal food planner",
+  title: "MOLDIR QADAM",
   description:
-    "Turn recipes you love into a weekly meal plan. Import, plan, shop, cook and track — all in one calm workflow.",
+    "MOLDIR QADAM - MOLDIR ADAM",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

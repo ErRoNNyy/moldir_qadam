@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import {
   CalendarIcon,
   HelpIcon,
-  SettingsIcon,
   ShoppingIcon,
   SignOutIcon,
   UserIcon,
@@ -68,17 +67,6 @@ export function Sidebar() {
       <div className="mt-auto px-3 pb-3">
         <div className="mb-2 flex flex-col gap-1">
           <Link
-            href="/settings"
-            className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
-              pathname.startsWith("/settings")
-                ? "bg-brand-soft text-brand-dark"
-                : "text-ink-soft hover:bg-surface-muted"
-            }`}
-          >
-            <SettingsIcon className="text-muted" />
-            Settings
-          </Link>
-          <Link
             href="/help"
             className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
               pathname.startsWith("/help")
@@ -96,9 +84,15 @@ export function Sidebar() {
             {initials}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="truncate text-sm font-semibold text-ink">
+            <Link
+              href="/settings"
+              aria-label={`Open settings for ${displayName}`}
+              className={`block truncate text-sm font-semibold transition-colors hover:text-brand ${
+                pathname.startsWith("/settings") ? "text-brand-dark" : "text-ink"
+              }`}
+            >
               {displayName}
-            </div>
+            </Link>
             <div className="truncate text-xs text-muted">{email || "—"}</div>
           </div>
           <button

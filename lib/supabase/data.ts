@@ -185,7 +185,7 @@ export async function insertRecipe(
 
   const recipeId = inserted.id as string;
 
-  await Promise.all([
+  const childInserts = await Promise.all([
     db.from("nutrition").insert({
       recipe_id: recipeId,
       calories: recipe.nutrition.calories,
@@ -212,6 +212,8 @@ export async function insertRecipe(
       }))
     ),
   ]);
+  const failedInsert = childInserts.find((result) => result.error);
+  if (failedInsert?.error) throw failedInsert.error;
 
   // Re-read with the DB-generated ingredient ids so the client stays in sync.
   const { data, error: readErr } = await db
