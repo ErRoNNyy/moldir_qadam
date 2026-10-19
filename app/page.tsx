@@ -34,6 +34,26 @@ interface RecipeDraft {
   steps: string[];
 }
 
+interface ExtractedRecipeData {
+  title: string;
+  servings: number;
+  prepMin: number;
+  cookMin: number;
+  nutrition: { calories: number; protein: number; carbs: number; fat: number };
+  ingredients: Array<{
+    name: string;
+    quantity: number;
+    unit: string;
+    category: IngredientCategory;
+    note: string;
+  }>;
+  steps: string[];
+}
+
+interface ExtractedRecipeResponse {
+  recipe: ExtractedRecipeData;
+}
+
 const CATEGORIES: IngredientCategory[] = [
   "Meat & Fish",
   "Carbs",
@@ -73,6 +93,29 @@ function emptyDraft(): RecipeDraft {
     fat: "0",
     ingredients: [newIngredient()],
     steps: [""],
+  };
+}
+
+function draftFromExtraction(recipe: ExtractedRecipeData, sourceUrl: string): RecipeDraft {
+  return {
+    title: recipe.title,
+    sourceUrl,
+    servings: String(recipe.servings),
+    prepMin: String(recipe.prepMin),
+    cookMin: String(recipe.cookMin),
+    calories: String(recipe.nutrition.calories),
+    protein: String(recipe.nutrition.protein),
+    carbs: String(recipe.nutrition.carbs),
+    fat: String(recipe.nutrition.fat),
+    ingredients: recipe.ingredients.map((ingredient) => ({
+      id: crypto.randomUUID(),
+      name: ingredient.name,
+      quantity: String(ingredient.quantity),
+      unit: ingredient.unit,
+      category: CATEGORIES.includes(ingredient.category) ? ingredient.category : "Other",
+      note: ingredient.note,
+    })),
+    steps: [...recipe.steps],
   };
 }
 
@@ -128,6 +171,7 @@ export default function VideoPage() {
   const [mode, setMode] = useState<ImportMode>("manual");
   const [draft, setDraft] = useState<RecipeDraft>(emptyDraft);
   const [saving, setSaving] = useState(false);
+  const [extracting, setExtracting] = useState(false);
   const [error, setError] = useState("");
 
   const recent = useMemo(
@@ -150,9 +194,47 @@ export default function VideoPage() {
     }));
   }
 
+  async function extractRecipe() {
+    if (saving || extracting) return;
+    setError("");
+
+    const parsedSource = getHttpUrl(draft.sourceUrl);
+    if (!parsedSource || !youtubeEmbedUrl(parsedSource)) {
+      setError("AI extraction currently supports public YouTube video links.");
+      return;
+    }
+
+    setExtracting(true);
+    try {
+      const response = await fetch("/api/recipes/extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ videoUrl: parsedSource.toString() }),
+      });
+      let payload: ExtractedRecipeResponse | { error?: string };
+      try {
+        payload = (await response.json()) as ExtractedRecipeResponse | { error?: string };
+      } catch {
+        throw new Error("Could not read the extraction response. Try again.");
+      }
+      if (!response.ok) {
+        throw new Error("error" in payload && payload.error ? payload.error : "Could not analyze this video. Try again.");
+      }
+      if (!("recipe" in payload) || !payload.recipe) {
+        throw new Error("No usable recipe was found in this video.");
+      }
+
+      setDraft(draftFromExtraction(payload.recipe, parsedSource.toString()));
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not analyze this video. Try again.");
+    } finally {
+      setExtracting(false);
+    }
+  }
+
   async function createRecipe(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (saving) return;
+    if (saving || extracting) return;
     setError("");
 
     const cleanTitle = draft.title.trim();
@@ -249,7 +331,7 @@ export default function VideoPage() {
           Import a Recipe
         </h1>
         <p className="mt-1 text-[15px] text-ink-soft">
-          Add recipes from a page or video, or enter one from scratch. Recipe details are filled in manually for now.
+          Paste a public YouTube link.
         </p>
       </header>
 
@@ -273,7 +355,7 @@ export default function VideoPage() {
         <ModeButton
           active={mode === "video"}
           title="Video recipe"
-          description="Attach a video and enter its details"
+          description="Extract a draft from YouTube"
           onClick={() => setMode("video")}
         >
           <YoutubeIcon />
@@ -288,7 +370,7 @@ export default function VideoPage() {
           <section className="mb-6 rounded-xl bg-surface-muted p-4">
             <label className="block">
               <span className="mb-1.5 block text-sm font-semibold text-ink">
-                {mode === "website" ? "Recipe page URL" : "Video URL"}
+                {mode === "website" ? "Recipe page URL" : "YouTube video URL"}
               </span>
               <input
                 type="url"
@@ -324,10 +406,25 @@ export default function VideoPage() {
                 />
               </div>
             )}
+            {mode === "video" && (
+              <div className="mt-3">
+                <button
+                  type="button"
+                  onClick={extractRecipe}
+                  disabled={!videoEmbed || saving || extracting}
+                  className="rounded-xl bg-brand px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {extracting ? "Analyzing video…" : "Analyze video"}
+                </button>
+                <p className="mt-2 text-xs leading-relaxed text-muted">
+                  Works with public YouTube videos. Ingredients, timing, and nutrition are AI estimates; review them before saving.
+                </p>
+              </div>
+            )}
             <p className="mt-2 text-xs leading-relaxed text-muted">
               {mode === "website"
                 ? "Open the page while you fill in the recipe below. The link will be saved with it."
-                : "You can preview YouTube links here. Add the ingredients and steps below; automatic video extraction is not enabled yet."}
+                : "You can also fill in or edit every recipe field before saving."}
             </p>
           </section>
         ) : (
@@ -531,10 +628,10 @@ export default function VideoPage() {
         )}
         <button
           type="submit"
-          disabled={saving}
+          disabled={saving || extracting}
           className="mt-5 flex w-full items-center justify-center rounded-xl bg-brand px-4 py-3.5 text-[15px] font-semibold text-white transition-colors hover:bg-brand-dark disabled:cursor-wait disabled:opacity-60"
         >
-          {saving ? "Saving recipe…" : "Save recipe"}
+          {saving ? "Saving recipe…" : extracting ? "Analyzing video…" : "Save recipe"}
         </button>
       </form>
 

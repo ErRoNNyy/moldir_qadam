@@ -103,7 +103,7 @@ export default function LoginPage() {
           <div className="mt-5 text-center text-sm text-ink-soft">
             {mode === "signin" ? (
               <>
-                New to Nouri?{" "}
+                New to MQM?{" "}
                 <button
                   type="button"
                   onClick={() => setMode("signup")}
